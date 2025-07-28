@@ -1,8 +1,8 @@
 "use client";
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Head from "next/head";
 import Link from "next/link";
-import Image from "next/image"; // Added for optimized images
+import Image from "next/image";
 import { Search, Film, Star, Calendar, Sparkles, TrendingUp } from "lucide-react";
 import { searchMovies } from "@/utils/api";
 import debounce from "lodash.debounce";
@@ -26,42 +26,44 @@ export default function Home() {
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const fetchMovies = useCallback(
-    debounce(async (search: string) => {
-      if (!search.trim()) {
-        setMovies([]);
-        setError("");
-        setIsLoading(false);
-        return;
-      }
-      setIsLoading(true);
-      try {
-        const data: SearchResponse = await searchMovies(search);
-        if (data.Response === "True" && data.Search) {
-          setMovies(data.Search);
-          setError("");
-        } else {
+  const fetchMovies = useMemo(
+    () =>
+      debounce(async (search: string) => {
+        if (!search.trim()) {
           setMovies([]);
-          setError(data.Error || "لم يتم العثور على أفلام");
+          setError("");
+          setIsLoading(false);
+          return;
         }
-      } catch (err: unknown) {
-        setError(
-          err instanceof Error
-            ? err.message.includes("429")
-              ? "تم الوصول إلى الحد الأقصى للطلبات. حاول لاحقًا."
-              : "حدث خطأ أثناء الاتصال"
-            : "خطأ غير معروف"
-        );
-        setMovies([]);
-      } finally {
-        setIsLoading(false);
-      }
-    }, 500),
-    [] // Empty dependency array is fine since debounce creates a new function
+        setIsLoading(true);
+        try {
+          const data: SearchResponse = await searchMovies(search);
+          if (data.Response === "True" && data.Search) {
+            setMovies(data.Search);
+            setError("");
+          } else {
+            setMovies([]);
+            setError(data.Error || "لم يتم العثور على أفلام");
+          }
+        } catch (err: unknown) {
+          setError(
+            err instanceof Error
+              ? err.message.includes("429")
+                ? "تم الوصول إلى الحد الأقصى للطلبات. حاول لاحقًا."
+                : "حدث خطأ أثناء الاتصال"
+              : "خطأ غير معروف"
+          );
+          setMovies([]);
+        } finally {
+          setIsLoading(false);
+        }
+      }, 500),
+    []
   );
 
   useEffect(() => {
     fetchMovies(query);
+    return () => fetchMovies.cancel(); // Cleanup debounce on unmount
   }, [query, fetchMovies]);
 
   const memoizedMovies = useMemo(() => movies, [movies]);

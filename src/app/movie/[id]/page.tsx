@@ -1,5 +1,7 @@
+"use client"; // Added to support client-side rendering (if needed)
 import Link from "next/link";
-import { ArrowLeft, Calendar, User, Star, Clock, Globe, Play, Heart, Share, Bookmark, Award, Film } from 'lucide-react';
+import Image from "next/image"; // Added for optimized images
+import { ArrowLeft, Calendar, User, Clock, Globe, Play, Heart, Share, Bookmark, Award, Film } from 'lucide-react';
 import { getMovieDetails } from "@/utils/api";
 
 interface MovieDetails {
@@ -35,10 +37,13 @@ export default async function MovieDetailsPage({ params }: MovieDetailsPageProps
     } else {
       error = data.Error || "لم يتم العثور على الفيلم";
     }
-  } catch (err: any) {
-    error = err.message.includes("429") 
-      ? "تم الوصول إلى الحد الأقصى للطلبات. حاول لاحقًا." 
-      : "حدث خطأ أثناء الاتصال";
+  } catch (err: unknown) {
+    error =
+      err instanceof Error
+        ? err.message.includes("429")
+          ? "تم الوصول إلى الحد الأقصى للطلبات. حاول لاحقًا."
+          : "حدث خطأ أثناء الاتصال"
+        : "خطأ غير معروف";
   }
 
   if (error) {
@@ -48,7 +53,7 @@ export default async function MovieDetailsPage({ params }: MovieDetailsPageProps
           <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-red-500/10 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
         </div>
-        
+
         <div className="relative z-10 text-center p-8 bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 max-w-lg mx-4 shadow-2xl">
           <div className="text-8xl mb-6 animate-bounce">⚠️</div>
           <h2 className="text-3xl font-bold text-white mb-6 bg-gradient-to-r from-red-400 to-pink-400 bg-clip-text text-transparent">
@@ -84,16 +89,13 @@ export default async function MovieDetailsPage({ params }: MovieDetailsPageProps
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 relative overflow-hidden">
       <div className="absolute inset-0">
-        <div className="absolute top-0 left-0 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-pink-500/5 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-500/3 rounded-full blur-3xl animate-pulse delay-2000"></div>
-      </div>
-
-      <div className="absolute inset-0">
-        <img
+        <Image
           src={movie.Poster !== "N/A" ? movie.Poster : "/placeholder.svg?height=1080&width=1920&query=movie+backdrop"}
-          alt=""
+          alt={`${movie.Title} backdrop`}
           className="w-full h-full object-cover opacity-5"
+          width={1920}
+          height={1080}
+          priority={false}
         />
         <div className="absolute inset-0 bg-gradient-to-br from-slate-950/95 via-purple-950/90 to-slate-950/95"></div>
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
@@ -113,24 +115,27 @@ export default async function MovieDetailsPage({ params }: MovieDetailsPageProps
         <div className="max-w-7xl mx-auto px-8 pb-20">
           <div className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 overflow-hidden shadow-2xl">
             <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 rounded-3xl blur opacity-10"></div>
-            
+
             <div className="relative">
               <div className="flex flex-col xl:flex-row">
                 <div className="xl:w-2/5 p-8">
                   <div className="relative group">
                     <div className="absolute -inset-4 bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     <div className="relative">
-                      <img
+                      <Image
                         src={
-                          movie.Poster !== "N/A" 
-                            ? movie.Poster 
+                          movie.Poster !== "N/A"
+                            ? movie.Poster
                             : "/placeholder.svg?height=600&width=400&query=movie+poster"
                         }
                         alt={movie.Title}
                         className="w-full rounded-3xl shadow-2xl transition-all duration-500 group-hover:scale-105"
+                        width={400}
+                        height={600}
+                        loading="lazy"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                      
+
                       <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500">
                         <div className="w-20 h-20 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 hover:bg-white/30 transition-colors duration-300 cursor-pointer">
                           <Play className="h-8 w-8 text-white ml-1" fill="currentColor" />
@@ -213,14 +218,14 @@ export default async function MovieDetailsPage({ params }: MovieDetailsPageProps
                         </h3>
                         <p className="text-gray-200 font-medium">{movie.Director}</p>
                       </div>
-                      
+
                       {movie.Actors && (
                         <div className="bg-white/5 backdrop-blur-md rounded-2xl p-6 border border-white/10">
                           <h3 className="text-lg font-bold text-purple-300 mb-3">الممثلون</h3>
                           <p className="text-gray-200 font-medium">{movie.Actors}</p>
                         </div>
                       )}
-                      
+
                       {movie.Country && (
                         <div className="bg-white/5 backdrop-blur-md rounded-2xl p-6 border border-white/10">
                           <h3 className="text-lg font-bold text-purple-300 mb-3 flex items-center gap-2">
@@ -230,7 +235,7 @@ export default async function MovieDetailsPage({ params }: MovieDetailsPageProps
                           <p className="text-gray-200 font-medium">{movie.Country}</p>
                         </div>
                       )}
-                      
+
                       {movie.Language && (
                         <div className="bg-white/5 backdrop-blur-md rounded-2xl p-6 border border-white/10">
                           <h3 className="text-lg font-bold text-purple-300 mb-3">اللغة</h3>
