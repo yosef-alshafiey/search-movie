@@ -2,7 +2,6 @@ import Link from "next/link";
 import { ArrowLeft, Calendar, User, Star, Clock, Globe, Play, Heart, Share, Bookmark, Award, Film } from 'lucide-react';
 import { getMovieDetails } from "@/utils/api";
 
-// تعريف الأنواع باستخدام TypeScript
 interface MovieDetails {
   imdbID: string;
   Title: string;
@@ -45,7 +44,6 @@ export default async function MovieDetailsPage({ params }: MovieDetailsPageProps
   if (error) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 flex items-center justify-center relative overflow-hidden">
-        {/* Animated Background */}
         <div className="absolute inset-0">
           <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-red-500/10 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
@@ -85,14 +83,12 @@ export default async function MovieDetailsPage({ params }: MovieDetailsPageProps
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 relative overflow-hidden">
-      {/* Animated Background Elements */}
       <div className="absolute inset-0">
         <div className="absolute top-0 left-0 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-pink-500/5 rounded-full blur-3xl animate-pulse delay-1000"></div>
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-500/3 rounded-full blur-3xl animate-pulse delay-2000"></div>
       </div>
 
-      {/* Background Image with Enhanced Overlay */}
       <div className="absolute inset-0">
         <img
           src={movie.Poster !== "N/A" ? movie.Poster : "/placeholder.svg?height=1080&width=1920&query=movie+backdrop"}
@@ -104,7 +100,6 @@ export default async function MovieDetailsPage({ params }: MovieDetailsPageProps
       </div>
 
       <div className="relative z-10">
-        {/* Enhanced Header */}
         <div className="p-8">
           <Link
             href="/"
@@ -115,15 +110,12 @@ export default async function MovieDetailsPage({ params }: MovieDetailsPageProps
           </Link>
         </div>
 
-        {/* Movie Details */}
         <div className="max-w-7xl mx-auto px-8 pb-20">
           <div className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 overflow-hidden shadow-2xl">
-            {/* Glow Effect */}
             <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 rounded-3xl blur opacity-10"></div>
             
             <div className="relative">
               <div className="flex flex-col xl:flex-row">
-                {/* Movie Poster */}
                 <div className="xl:w-2/5 p-8">
                   <div className="relative group">
                     <div className="absolute -inset-4 bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -139,7 +131,6 @@ export default async function MovieDetailsPage({ params }: MovieDetailsPageProps
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                       
-                      {/* Play Button Overlay */}
                       <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500">
                         <div className="w-20 h-20 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 hover:bg-white/30 transition-colors duration-300 cursor-pointer">
                           <Play className="h-8 w-8 text-white ml-1" fill="currentColor" />
@@ -148,7 +139,6 @@ export default async function MovieDetailsPage({ params }: MovieDetailsPageProps
                     </div>
                   </div>
 
-                  {/* Action Buttons */}
                   <div className="flex gap-4 mt-8">
                     <button className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-4 rounded-2xl hover:from-purple-700 hover:to-pink-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl font-medium flex items-center justify-center gap-2">
                       <Play className="h-5 w-5" />
@@ -166,10 +156,8 @@ export default async function MovieDetailsPage({ params }: MovieDetailsPageProps
                   </div>
                 </div>
 
-                {/* Movie Info */}
                 <div className="xl:w-3/5 p-8">
                   <div className="space-y-8">
-                    {/* Title and Rating */}
                     <div>
                       <h1 className="text-4xl md:text-5xl font-black text-white mb-6 leading-tight bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-transparent">
                         {movie.Title}
@@ -193,7 +181,6 @@ export default async function MovieDetailsPage({ params }: MovieDetailsPageProps
                       </div>
                     </div>
 
-                    {/* Genre */}
                     <div>
                       <h3 className="text-xl font-bold text-purple-300 mb-4 flex items-center gap-2">
                         <Film className="h-5 w-5" />
@@ -211,7 +198,6 @@ export default async function MovieDetailsPage({ params }: MovieDetailsPageProps
                       </div>
                     </div>
 
-                    {/* Plot */}
                     <div>
                       <h3 className="text-xl font-bold text-purple-300 mb-4">القصة</h3>
                       <div className="bg-white/5 backdrop-blur-md rounded-2xl p-6 border border-white/10">
@@ -219,7 +205,6 @@ export default async function MovieDetailsPage({ params }: MovieDetailsPageProps
                       </div>
                     </div>
 
-                    {/* Details Grid */}
                     <div className="grid md:grid-cols-2 gap-6">
                       <div className="bg-white/5 backdrop-blur-md rounded-2xl p-6 border border-white/10">
                         <h3 className="text-lg font-bold text-purple-300 mb-3 flex items-center gap-2">

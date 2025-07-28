@@ -2,7 +2,8 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import Head from "next/head";
 import Link from "next/link";
-import { Search, Film, Star, Calendar, Sparkles, TrendingUp } from 'lucide-react';
+import Image from "next/image"; // Added for optimized images
+import { Search, Film, Star, Calendar, Sparkles, TrendingUp } from "lucide-react";
 import { searchMovies } from "@/utils/api";
 import debounce from "lodash.debounce";
 
@@ -25,7 +26,6 @@ export default function Home() {
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  // Debounced fetch function
   const fetchMovies = useCallback(
     debounce(async (search: string) => {
       if (!search.trim()) {
@@ -44,26 +44,26 @@ export default function Home() {
           setMovies([]);
           setError(data.Error || "لم يتم العثور على أفلام");
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         setError(
-          err.message.includes("429")
-            ? "تم الوصول إلى الحد الأقصى للطلبات. حاول لاحقًا."
-            : "حدث خطأ أثناء الاتصال"
+          err instanceof Error
+            ? err.message.includes("429")
+              ? "تم الوصول إلى الحد الأقصى للطلبات. حاول لاحقًا."
+              : "حدث خطأ أثناء الاتصال"
+            : "خطأ غير معروف"
         );
         setMovies([]);
       } finally {
         setIsLoading(false);
       }
     }, 500),
-    []
+    [] // Empty dependency array is fine since debounce creates a new function
   );
 
-  // Watch query changes
   useEffect(() => {
     fetchMovies(query);
   }, [query, fetchMovies]);
 
-  // Memoize movies to prevent unnecessary re-renders
   const memoizedMovies = useMemo(() => movies, [movies]);
 
   return (
@@ -72,14 +72,12 @@ export default function Home() {
         <title>تطبيق بحث الأفلام</title>
       </Head>
       <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 relative overflow-hidden">
-        {/* Animated Background Elements */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-pink-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl animate-pulse delay-2000"></div>
         </div>
 
-        {/* Floating Particles */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           {[...Array(20)].map((_, i) => (
             <div
@@ -95,7 +93,6 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Hero Section */}
         <div className="relative z-10">
           <div className="px-4 py-20 sm:px-6 lg:px-8">
             <div className="text-center">
@@ -112,7 +109,6 @@ export default function Home() {
                 اكتشف عالم السينما الساحر واستكشف آلاف الأفلام من جميع أنحاء العالم
               </p>
 
-              {/* Enhanced Search Bar */}
               <div className="max-w-3xl mx-auto relative group">
                 <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 rounded-3xl blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
                 <div className="relative">
@@ -139,7 +135,6 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Trending Badge */}
               <div className="mt-8 flex justify-center">
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-500/20 to-red-500/20 border border-orange-500/30 rounded-full text-orange-300 text-sm font-medium">
                   <TrendingUp className="h-4 w-4" />
@@ -150,7 +145,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Error Message */}
         {error && (
           <div className="max-w-4xl mx-auto px-4 mb-8 relative z-10">
             <div className="bg-red-500/10 backdrop-blur-md border border-red-500/20 rounded-2xl p-6 text-center relative overflow-hidden">
@@ -163,7 +157,6 @@ export default function Home() {
           </div>
         )}
 
-        {/* Movies Grid */}
         <div className="max-w-8xl mx-auto px-4 pb-20 relative z-10">
           {memoizedMovies.length > 0 && (
             <div className="mb-12 text-center">
@@ -188,26 +181,21 @@ export default function Home() {
                     animationDelay: `${index * 0.1}s`,
                   }}
                 >
-                  {/* Glow Effect */}
                   <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 rounded-3xl blur opacity-0 group-hover:opacity-20 transition duration-500"></div>
-                  
+
                   <div className="relative">
                     <div className="aspect-[2/3] relative overflow-hidden rounded-t-3xl">
-                      <img
-                        src={
-                          movie.Poster !== "N/A"
-                            ? movie.Poster
-                            : "/placeholder.svg?height=400&width=300&query=movie+poster"
-                        }
+                      <Image
+                        src={movie.Poster !== "N/A" ? movie.Poster : "/placeholder.svg?height=400&width=300&query=movie+poster"}
                         alt={movie.Title}
                         className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:brightness-110"
+                        width={300}
+                        height={400}
                         loading="lazy"
                       />
-                      
-                      {/* Overlay Gradient */}
+
                       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
-                      
-                      {/* Year Badge */}
+
                       <div className="absolute top-4 right-4 transform translate-x-full group-hover:translate-x-0 transition-transform duration-500">
                         <div className="flex items-center gap-2 bg-black/70 backdrop-blur-sm px-3 py-1 rounded-full text-white/90 text-xs font-medium">
                           <Calendar className="h-3 w-3" />
@@ -215,7 +203,6 @@ export default function Home() {
                         </div>
                       </div>
 
-                      {/* Play Button */}
                       <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 transform scale-50 group-hover:scale-100">
                         <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 hover:bg-white/30 transition-colors duration-300">
                           <div className="w-0 h-0 border-l-[12px] border-l-white border-t-[8px] border-t-transparent border-b-[8px] border-b-transparent ml-1"></div>
